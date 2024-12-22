@@ -90,7 +90,4 @@ if __name__ == "__main__":
     except Exception as exception:
         print(f"Failed to connect to the database: {exception}")
 
-    # Example usage: Uploading cleaned data (ensure the cleaned DataFrame is passed from another script)
-    # from data_extraction import get_cleaned_user_data
-    # cleaned_user_data = get_cleaned_user_data()  # Ensure this function provides the DataFrame
-    # connection.upload_to_db(cleaned_user_data, table_name='dim_users', file_path='pgadmin_creds.yaml')
+

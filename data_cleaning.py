@@ -6,6 +6,12 @@ import re
 class DataCleaning:
 
     def clean_user_data(self, df):
+        """
+        Takes the user DataFrame and performs various data cleaning processes before returning the DataFrame.
+
+        :param df: The user DataFrame to be cleaned.
+        :return: The cleaned user DataFrame.
+        """
         # Change "NULL" string values to None 
         df.replace("NULL", None, inplace=True)
         # Remove rows with Null values
@@ -20,6 +26,12 @@ class DataCleaning:
         return df
         
     def clean_card_data(self, df):
+        """
+        Takes the card DataFrame and performs various data cleaning processes before returning the DataFrame.
+
+        :param df: The card DataFrame to be cleaned.
+        :return: The cleaned card DataFrame.
+        """
         # Change "NULL" string values to None 
         df.replace("NULL", None, inplace=True)        
         # Remove rows with Null values
@@ -38,51 +50,40 @@ class DataCleaning:
 
         
     def clean_store_data(self, df):
+        """
+        Takes the store DataFrame and performs various data cleaning processes before returning the DataFrame.
+
+        :param df: The store DataFrame to be cleaned.
+        :return: The cleaned store DataFrame.
+        """
         # Range for the dropna section to operate within to exclude the web portal
         start_index = 1
         end_index = 450
-
-        # Step 1: Replace "NULL" with None
+        # Replace "NULL" with None
         df.replace("NULL", None, inplace=True)
-        # print(f"Row count after replacing 'NULL': {len(df)}")
-
-        # Step 2: Convert 'opening_date' to datetime and handle invalid dates
+        # Convert 'opening_date' to datetime and handle invalid dates
         df["opening_date"] = pd.to_datetime(df["opening_date"], errors="coerce", format="mixed")
         df["opening_date"] = df["opening_date"].dt.strftime("%Y-%m-%d")
-        # print(f"Row count after opening_date cleaning: {len(df)}")
-
-        ''' # Step 3: Identify rows with NaN before dropna
-        print("Rows with missing values before dropna:")
-        print(df[df.isnull().any(axis=1)])'''
-
-        # Step 4: Apply dropna only within the specified index range
+        # Apply dropna only within the specified index range
         df_in_range = df.loc[start_index:end_index]
         df_out_of_range = df.drop(df_in_range.index)
-
         # Drop rows with missing values in range
         df_in_range = df_in_range.dropna(subset=[col for col in df.columns if col != "lat"])
-
         # Combine cleaned data
         df = pd.concat([df_in_range, df_out_of_range]).sort_index()
-        # print(f"Row count after dropna: {len(df)}")
-
-        # Step 5: Clean "staff_numbers"
+        # Clean "staff_numbers"
         df["staff_numbers"] = df["staff_numbers"].apply(lambda x: "".join(filter(str.isdigit, str(x))))
         print(f"Row count after cleaning staff_numbers: {len(df)}")
         return df
 
     @staticmethod
-    def convert_product_weights(products_df: pd.DataFrame) -> pd.DataFrame:
+    def convert_product_weights(products_df: pd.DataFrame):
         """
-        Cleans and converts the weight column in the products DataFrame to a float representing weight in kg.
+        Takes the products DataFrame and converts the weight column to a uniform metric (KG).
 
-        Args:
-            products_df (pd.DataFrame): The products DataFrame with a weight column.
-
-        Returns:
-            pd.DataFrame: The updated DataFrame with cleaned and converted weights.
-        """
-        
+        :param products_df: The products DataFrame to be converted.
+        :return: The products DataFrame with converted weight column.
+        """        
         def convert_to_kg(weight):
             if pd.isnull(weight):
                 return None
@@ -145,27 +146,42 @@ class DataCleaning:
 
     
     def clean_products_data(self, df):
-        # Step 1: Replace "NULL" with None 
-        df = df.replace("NULL", None)
+        """
+        Takes the converted products DataFrame and performs various data cleaning processes before returning the DataFrame.
 
-        # Step 2: Remove rows with Null values
+        :param df: The products DataFrame to be cleaned.
+        :return: The cleaned prducts DataFrame.
+        """
+        # Replace "NULL" with None 
+        df = df.replace("NULL", None)
+        # Remove rows with Null values
         df.dropna(inplace=True)
         return df
 
     def clean_order_data(self, df):
+        """
+        Takes the orders DataFrame and performs various data cleaning processes before returning the DataFrame.
+
+        :param df: The orders DataFrame to be cleaned.
+        :return: The cleaned orders DataFrame.
+        """
         df = df.drop(columns=["first_name", "last_name", "1"])
         return df
     
     def clean_events_data(self, df):
-        # Step 1: Replace "NULL" with None
-        df = df.replace("NULL", None)
-        
-        # Step 2: Convert "day", "month", and "year" columns to numeric values
-        #    Invalid parsing will result in NaN
+        """
+        Takes the events DataFrame and performs various data cleaning processes before returning the DataFrame.
+
+        :param df: The events DataFrame to be cleaned.
+        :return: The cleaned events DataFrame.
+        """
+        # Replace "NULL" with None
+        df = df.replace("NULL", None) 
+        # Convert "day", "month", and "year" columns to numeric values
+        # Invalid parsing will result in NaN
         for col in ["day", "month", "year"]:
             if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors="coerce")
-        
-        # Step 3: Remove rows with Null values
+                df[col] = pd.to_numeric(df[col], errors="coerce")   
+        # Remove rows with Null values
         df.dropna(inplace=True)
         return df
