@@ -171,7 +171,7 @@ GROUP BY
 ORDER BY
     total_no_stores DESC;
 
-(Return 266 entries for GB webportal still GB)
+-- Returns 266 entries for GB webportal still GB
 
 
 -- Task 2
@@ -249,7 +249,7 @@ GROUP BY
 ORDER BY
 	total_sales DESC;
 
-(MAYBE REVISIT SLIGHT VARIATIONS IN PERCENTAGE BUT STILL TOTAL 100)
+
 
 
 -- Task 6
